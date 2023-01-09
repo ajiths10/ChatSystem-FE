@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -23,7 +23,10 @@ const theme = createTheme();
 
 const SignUp = () => {
   const history = useNavigate();
-  const { RegisterUser } = useContext(UserContext);
+  const { RegisterUser, response, clearAll } = useContext(UserContext);
+
+  const [btnDisabled, setBtnDisabled] = useState(false);
+
   const validationSchema = yup.object({
     firstName: yup.string("Enter your first name").required("required"),
     lastName: yup.string("Enter your last name").required("required"),
@@ -59,8 +62,16 @@ const SignUp = () => {
       //history("/");
       values.name = values.firstName + " " + values.lastName;
       RegisterUser(values);
+      setBtnDisabled(true);
     },
   });
+
+  useEffect(() => {
+    if (response) {
+      setBtnDisabled(false);
+      clearAll();
+    }
+  }, [response]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -199,6 +210,7 @@ const SignUp = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={btnDisabled}
             >
               Sign Up
             </Button>

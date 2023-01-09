@@ -1,11 +1,15 @@
+import { USER_REGISTER, CLEAR_ALL } from "./UserType";
+
 const UserReducer = (state, action) => {
-  switch (action) {
-    case "add":
-      return state + 1;
-    case "subtract":
-      return state - 1;
-    case "reset":
-      return 0;
+  switch (action.type) {
+    case USER_REGISTER:
+      return {
+        ...state,
+        response: action.data,
+      };
+
+    case CLEAR_ALL:
+      return (state = "");
     default:
       throw new Error("Unexpected action");
   }
