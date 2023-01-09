@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import UserContext from "../../context/user/UserContext";
 // import Context from "../../../context/authContext/Context";
 // import CommonContext from "../../../context/commonContext/CommonContext";
 
@@ -22,7 +23,7 @@ const theme = createTheme();
 
 const SignUp = () => {
   const history = useNavigate();
-
+  const { RegisterUser } = useContext(UserContext);
   const validationSchema = yup.object({
     firstName: yup.string("Enter your first name").required("required"),
     lastName: yup.string("Enter your last name").required("required"),
@@ -56,6 +57,8 @@ const SignUp = () => {
     onSubmit: (values) => {
       console.log(values);
       //history("/");
+      values.name = values.firstName + " " + values.lastName;
+      RegisterUser(values);
     },
   });
 
