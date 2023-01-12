@@ -1,4 +1,9 @@
-import { USER_REGISTER, USER_LOGIN, CLEAR_ALL } from "./UserType";
+import {
+  USER_REGISTER,
+  USER_LOGIN,
+  USER_AUTHENTICATED,
+  CLEAR_ALL,
+} from "./UserType";
 
 const UserReducer = (state, action) => {
   switch (action.type) {
@@ -11,6 +16,11 @@ const UserReducer = (state, action) => {
       return {
         ...state,
         response: action.data,
+      };
+    case USER_AUTHENTICATED:
+      return {
+        ...state,
+        isAuthenticated: action.data,
       };
 
     case CLEAR_ALL:

@@ -4,13 +4,24 @@ import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
 import Commonontext from "../common/CommonContext";
 import { api } from "../../common/api";
-import { USER_REGISTER, USER_LOGIN, CLEAR_ALL } from "./UserType";
-const initialState = { response: "" };
+import {
+  USER_REGISTER,
+  USER_LOGIN,
+  USER_AUTHENTICATED,
+  CLEAR_ALL,
+} from "./UserType";
+const initialState = { isAuthenticated: false, response: "" };
 
 const UserState = (props) => {
   const history = useNavigate();
   const { setAlert } = useContext(Commonontext);
   const [state, dispatch] = useReducer(UserReducer, initialState);
+
+  const VerifyUser = async (formData) => {
+    const res = await api(formData, "/user/verify");
+    setAlert(res.data);
+    dispatch({ type: USER_AUTHENTICATED, data: res.data });
+  };
 
   const RegisterUser = async (formData) => {
     const res = await api(formData, "/user/register");
@@ -37,7 +48,14 @@ const UserState = (props) => {
 
   return (
     <UserContext.Provider
-      value={{ response: state.response, RegisterUser, LoginUser, clearAll }}
+      value={{
+        response: state.response,
+        isAuthenticated: state.isAuthenticated,
+        RegisterUser,
+        LoginUser,
+        VerifyUser,
+        clearAll,
+      }}
     >
       {props.children}
     </UserContext.Provider>
