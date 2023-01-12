@@ -1,14 +1,39 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Redirect } from "react-router-dom";
 import SignUp from "../view/signup";
 import Login from "../view/login";
+import Chat from "../view/chat";
+import PrivateRoute from "./PrivateRoute";
+import ReversePrivateRoute from "./ReversePrivateRoute";
 
 const RouteIndex = () => {
   return (
     <>
       <Routes>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/signup"
+          element={
+            <ReversePrivateRoute>
+              <SignUp />
+            </ReversePrivateRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <ReversePrivateRoute>
+              <Login />
+            </ReversePrivateRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Chat />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );

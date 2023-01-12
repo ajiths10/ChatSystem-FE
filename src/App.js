@@ -8,6 +8,8 @@ import { SnackbarProvider } from "notistack";
 const App = () => {
   global.domainURL = process.env.REACT_APP_DOMAIN;
 
+  global.UserToken = localStorage.getItem("UserToken");
+
   return (
     <div className="App">
       <SnackbarProvider>
