@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -14,6 +14,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Fab from "@material-ui/core/Fab";
 // import SendIcon from "@material-ui/icons/Send";
 import { randomColor } from "../../common/common";
+import UserContext from "../../context/user/UserContext";
 
 const useStyles = makeStyles({
   table: {
@@ -36,7 +37,15 @@ const useStyles = makeStyles({
 });
 
 const Chat = () => {
+  const { getAllUSers, all_users, isAuthenticated } = useContext(UserContext);
+
   const classes = useStyles();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getAllUSers();
+    }
+  }, [isAuthenticated]);
 
   return (
     <div>

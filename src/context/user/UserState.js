@@ -8,9 +8,10 @@ import {
   USER_REGISTER,
   USER_LOGIN,
   USER_AUTHENTICATED,
+  USER_ALL_USERS,
   CLEAR_ALL,
 } from "./UserType";
-const initialState = { isAuthenticated: false, response: "" };
+const initialState = { isAuthenticated: false, all_users: [], response: "" };
 
 const UserState = (props) => {
   const history = useNavigate();
@@ -55,6 +56,13 @@ const UserState = (props) => {
     dispatch({ type: USER_LOGIN, data: res.data });
   };
 
+  const getAllUSers = async (formData) => {
+    const res = await api(formData, "/user/allusers");
+    // setAlert(res.data);
+
+    dispatch({ type: USER_ALL_USERS, data: res.data });
+  };
+
   const clearAll = () => {
     dispatch({ type: CLEAR_ALL });
   };
@@ -64,9 +72,11 @@ const UserState = (props) => {
       value={{
         response: state.response,
         isAuthenticated: state.isAuthenticated,
+        all_users: state.all_users,
         RegisterUser,
         LoginUser,
         VerifyUser,
+        getAllUSers,
         clearAll,
       }}
     >
