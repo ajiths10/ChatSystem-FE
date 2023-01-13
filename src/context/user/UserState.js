@@ -19,14 +19,27 @@ const UserState = (props) => {
 
   const VerifyUser = async (formData) => {
     const res = await api(formData, "/user/verify");
-    setAlert(res.data);
-    dispatch({ type: USER_AUTHENTICATED, data: res.data });
+
+    if (res.data.status) {
+      dispatch({ type: USER_AUTHENTICATED, data: true });
+    } else {
+      setAlert(res.data);
+      dispatch({ type: USER_AUTHENTICATED, data: false });
+      global.UserToken = false;
+      localStorage.setItem("UserToken", "");
+      history("/login");
+    }
   };
 
   const RegisterUser = async (formData) => {
     const res = await api(formData, "/user/register");
     setAlert(res.data);
     dispatch({ type: USER_REGISTER, data: res.data });
+    if (res.data.status) {
+      setTimeout(() => {
+        history("/login");
+      }, 0);
+    }
   };
 
   const LoginUser = async (formData) => {
@@ -37,7 +50,7 @@ const UserState = (props) => {
       global.UserToken = res.data.token;
       setTimeout(() => {
         history("/");
-      }, 500);
+      }, 0);
     }
     dispatch({ type: USER_LOGIN, data: res.data });
   };

@@ -8,13 +8,13 @@ import ReversePrivateRoute from "./ReversePrivateRoute";
 import UserContext from "../context/user/UserContext";
 
 const RouteIndex = () => {
-  const { VerifyUser } = useContext(UserContext);
+  const { VerifyUser, isAuthenticated } = useContext(UserContext);
 
   useEffect(() => {
-    if (global.UserToken) {
+    if (global.UserToken && !isAuthenticated) {
       VerifyUser({ userId: global.UserToken });
     }
-  }, [global.UserToken]);
+  }, [isAuthenticated]);
 
   return (
     <>
