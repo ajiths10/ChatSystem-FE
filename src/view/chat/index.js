@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -37,7 +37,10 @@ const useStyles = makeStyles({
 });
 
 const Chat = () => {
-  const { getAllUSers, all_users, isAuthenticated } = useContext(UserContext);
+  const { getAllUSers, all_users, user, isAuthenticated } =
+    useContext(UserContext);
+  const [isUser, setUser] = useState([]);
+  const [allUsersState, setAllUsersState] = useState([]);
 
   const classes = useStyles();
 
@@ -46,6 +49,16 @@ const Chat = () => {
       getAllUSers();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    setAllUsersState(all_users);
+  }, [all_users]);
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user]);
 
   return (
     <div>
@@ -59,17 +72,17 @@ const Chat = () => {
       <Grid container component={Paper} className={classes.chatSection}>
         <Grid item xs={3} className={classes.borderRight500}>
           <List>
-            <ListItem button key="RemySharp">
+            <ListItem button key={isUser.name}>
               <ListItemIcon>
                 <Avatar
                   style={{
                     backgroundColor: randomColor(),
                   }}
                 >
-                  J
+                  {isUser.name ? isUser.name.charAt(0) : "A"}
                 </Avatar>
               </ListItemIcon>
-              <ListItemText primary="John Wick"></ListItemText>
+              <ListItemText primary={isUser.name}></ListItemText>
             </ListItem>
           </List>
           <Divider />
@@ -83,43 +96,25 @@ const Chat = () => {
           </Grid>
           <Divider />
           <List>
-            <ListItem button key="RemySharp">
-              <ListItemIcon>
-                <Avatar
-                  style={{
-                    backgroundColor: randomColor(),
-                  }}
-                >
-                  R
-                </Avatar>
-              </ListItemIcon>
-              <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
-              <ListItemText secondary="online" align="right"></ListItemText>
-            </ListItem>
-            <ListItem button key="Alice">
-              <ListItemIcon>
-                <Avatar
-                  style={{
-                    backgroundColor: randomColor(),
-                  }}
-                >
-                  A
-                </Avatar>
-              </ListItemIcon>
-              <ListItemText primary="Alice">Alice</ListItemText>
-            </ListItem>
-            <ListItem button key="CindyBaker">
-              <ListItemIcon>
-                <Avatar
-                  style={{
-                    backgroundColor: randomColor(),
-                  }}
-                >
-                  C
-                </Avatar>
-              </ListItemIcon>
-              <ListItemText primary="Cindy Baker">Cindy Baker</ListItemText>
-            </ListItem>
+            {allUsersState.map((buscat) => {
+              return (
+                <ListItem button key={buscat.name}>
+                  <ListItemIcon>
+                    <Avatar
+                      style={{
+                        backgroundColor: randomColor(),
+                      }}
+                    >
+                      {buscat.name.charAt(0)}
+                    </Avatar>
+                  </ListItemIcon>
+                  <ListItemText primary={buscat.name}>
+                    {buscat.name}
+                  </ListItemText>
+                  {/* <ListItemText secondary="online" align="right"></ListItemText> */}
+                </ListItem>
+              );
+            })}
           </List>
         </Grid>
         <Grid item xs={9}>

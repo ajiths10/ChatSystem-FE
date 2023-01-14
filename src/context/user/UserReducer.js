@@ -21,7 +21,8 @@ const UserReducer = (state, action) => {
     case USER_AUTHENTICATED:
       return {
         ...state,
-        isAuthenticated: action.data,
+        user: action.data,
+        isAuthenticated: true,
       };
     case USER_ALL_USERS:
       return {

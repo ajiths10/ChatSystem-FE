@@ -11,7 +11,12 @@ import {
   USER_ALL_USERS,
   CLEAR_ALL,
 } from "./UserType";
-const initialState = { isAuthenticated: false, all_users: [], response: "" };
+const initialState = {
+  isAuthenticated: false,
+  user: [],
+  all_users: [],
+  response: "",
+};
 
 const UserState = (props) => {
   const history = useNavigate();
@@ -22,7 +27,7 @@ const UserState = (props) => {
     const res = await api(formData, "/user/verify");
 
     if (res.data.status) {
-      dispatch({ type: USER_AUTHENTICATED, data: true });
+      dispatch({ type: USER_AUTHENTICATED, data: res.data.data });
     } else {
       setAlert(res.data);
       dispatch({ type: USER_AUTHENTICATED, data: false });
@@ -60,7 +65,7 @@ const UserState = (props) => {
     const res = await api(formData, "/user/allusers");
     // setAlert(res.data);
 
-    dispatch({ type: USER_ALL_USERS, data: res.data });
+    dispatch({ type: USER_ALL_USERS, data: res.data.data });
   };
 
   const clearAll = () => {
@@ -73,6 +78,7 @@ const UserState = (props) => {
         response: state.response,
         isAuthenticated: state.isAuthenticated,
         all_users: state.all_users,
+        user: state.user,
         RegisterUser,
         LoginUser,
         VerifyUser,
