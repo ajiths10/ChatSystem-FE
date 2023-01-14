@@ -11,10 +11,10 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
-import Fab from "@material-ui/core/Fab";
 // import SendIcon from "@material-ui/icons/Send";
 import { randomColor } from "../../common/common";
 import UserContext from "../../context/user/UserContext";
+import ChatForm from "./ChatForm";
 
 const useStyles = makeStyles({
   table: {
@@ -41,6 +41,7 @@ const Chat = () => {
     useContext(UserContext);
   const [isUser, setUser] = useState([]);
   const [allUsersState, setAllUsersState] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(0);
 
   const classes = useStyles();
 
@@ -51,7 +52,12 @@ const Chat = () => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    setAllUsersState(all_users);
+    if (all_users) {
+      setAllUsersState(all_users);
+      if (all_users[0] && all_users[0].id) {
+        setSelectedUserId(all_users[0].id);
+      }
+    }
   }, [all_users]);
 
   useEffect(() => {
@@ -96,9 +102,16 @@ const Chat = () => {
           </Grid>
           <Divider />
           <List>
-            {allUsersState.map((buscat) => {
+            {allUsersState.map((buscat, index) => {
               return (
-                <ListItem button key={buscat.name}>
+                <ListItem
+                  button
+                  key={buscat.name}
+                  selected={selectedUserId === buscat.id ? true : false}
+                  onClick={() => {
+                    setSelectedUserId(buscat.id);
+                  }}
+                >
                   <ListItemIcon>
                     <Avatar
                       style={{
@@ -160,20 +173,7 @@ const Chat = () => {
             </ListItem>
           </List>
           <Divider />
-          <Grid container style={{ padding: "20px" }}>
-            <Grid item xs={11}>
-              <TextField
-                id="outlined-basic-email"
-                label="Type Something"
-                fullWidth
-              />
-            </Grid>
-            <Grid xs={1} align="right">
-              <Fab color="primary" aria-label="add">
-                {/* <SendIcon /> */}
-              </Fab>
-            </Grid>
-          </Grid>
+          <ChatForm recipientId={selectedUserId} />
         </Grid>
       </Grid>
     </div>

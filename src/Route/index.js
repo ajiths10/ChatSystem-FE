@@ -14,7 +14,7 @@ const RouteIndex = () => {
     if (global.UserToken && !isAuthenticated) {
       VerifyUser({ userId: global.UserToken });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, global.UserToken]);
 
   return (
     <>
