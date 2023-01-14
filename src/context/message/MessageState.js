@@ -13,14 +13,9 @@ const MessageState = (props) => {
   const [state, dispatch] = useReducer(MessageReducer, initialState);
 
   const getAllUserMessage = async (formData) => {
-    const res = await api(formData, "/message/user");
-    setAlert(res.data);
-    dispatch({ type: GET_ALL_MESSAGES, data: res.data });
-    if (res.data.status) {
-      setTimeout(() => {
-        history("/login");
-      }, 0);
-    }
+    const res = await api(formData, "/message/usermessage");
+    //setAlert(res.data);
+    dispatch({ type: GET_ALL_MESSAGES, data: res.data.data });
   };
 
   const messageAction = async (formData) => {
@@ -36,6 +31,7 @@ const MessageState = (props) => {
     <MessageContext.Provider
       value={{
         response: state.response,
+        user_messages: state.user_messages,
         getAllUserMessage,
         messageAction,
         clearAll,

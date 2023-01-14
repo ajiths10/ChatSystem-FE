@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -15,6 +15,8 @@ import Avatar from "@material-ui/core/Avatar";
 import { randomColor } from "../../common/common";
 import UserContext from "../../context/user/UserContext";
 import ChatForm from "./ChatForm";
+import MessageContext from "../../context/message/MessageContext";
+import moment from "moment";
 
 const useStyles = makeStyles({
   table: {
@@ -39,10 +41,14 @@ const useStyles = makeStyles({
 const Chat = () => {
   const { getAllUSers, all_users, user, isAuthenticated } =
     useContext(UserContext);
+  const { getAllUserMessage, user_messages } = useContext(MessageContext);
+
   const [isUser, setUser] = useState([]);
   const [allUsersState, setAllUsersState] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(0);
+  const [userMessages, setUserMessages] = useState([]);
 
+  const scrollRef = useRef(null);
   const classes = useStyles();
 
   useEffect(() => {
@@ -54,8 +60,8 @@ const Chat = () => {
   useEffect(() => {
     if (all_users) {
       setAllUsersState(all_users);
-      if (all_users[0] && all_users[0].id) {
-        setSelectedUserId(all_users[0].id);
+      if (all_users[0] && all_users[0]) {
+        setSelectedUserId(all_users[0]);
       }
     }
   }, [all_users]);
@@ -66,12 +72,34 @@ const Chat = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (selectedUserId) {
+      getAllUserMessage({ recipientId: selectedUserId.id });
+    }
+  }, [selectedUserId]);
+
+  useEffect(() => {
+    if (user_messages) {
+      setUserMessages(user_messages);
+    }
+  }, [user_messages]);
+
+  useEffect(() => {
+    if (scrollRef && scrollRef.current) {
+      scrollRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
+    }
+  });
+
   return (
     <div>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h5" className="header-message">
-            Remy Sharp Chat
+            {selectedUserId ? selectedUserId.name : "Loading"}
           </Typography>
         </Grid>
       </Grid>
@@ -107,9 +135,9 @@ const Chat = () => {
                 <ListItem
                   button
                   key={buscat.name}
-                  selected={selectedUserId === buscat.id ? true : false}
+                  selected={selectedUserId.id === buscat.id ? true : false}
                   onClick={() => {
-                    setSelectedUserId(buscat.id);
+                    setSelectedUserId(buscat);
                   }}
                 >
                   <ListItemIcon>
@@ -131,49 +159,32 @@ const Chat = () => {
           </List>
         </Grid>
         <Grid item xs={9}>
-          <List className={classes.messageArea}>
-            <ListItem key="1">
-              <Grid container>
-                <Grid item xs={12}>
-                  <ListItemText
-                    align="right"
-                    primary="Hey man, What's up ?"
-                  ></ListItemText>
-                </Grid>
-                <Grid item xs={12}>
-                  <ListItemText align="right" secondary="09:30"></ListItemText>
-                </Grid>
-              </Grid>
-            </ListItem>
-            <ListItem key="2">
-              <Grid container>
-                <Grid item xs={12}>
-                  <ListItemText
-                    align="left"
-                    primary="Hey, Iam Good! What about you ?"
-                  ></ListItemText>
-                </Grid>
-                <Grid item xs={12}>
-                  <ListItemText align="left" secondary="09:31"></ListItemText>
-                </Grid>
-              </Grid>
-            </ListItem>
-            <ListItem key="3">
-              <Grid container>
-                <Grid item xs={12}>
-                  <ListItemText
-                    align="right"
-                    primary="Cool. i am good, let's catch up!"
-                  ></ListItemText>
-                </Grid>
-                <Grid item xs={12}>
-                  <ListItemText align="right" secondary="10:30"></ListItemText>
-                </Grid>
-              </Grid>
-            </ListItem>
+          <List className={classes.messageArea} ref={scrollRef}>
+            {userMessages.map((spacedog) => {
+              return (
+                <ListItem key={spacedog.id}>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <ListItemText
+                        align={isUser.id === spacedog.userid ? "left" : "right"}
+                        primary={spacedog.message}
+                      ></ListItemText>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <ListItemText
+                        align={isUser.id === spacedog.userid ? "left" : "right"}
+                        secondary={moment(spacedog.created_at).format(
+                          "hh:mm:ss a"
+                        )}
+                      ></ListItemText>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+              );
+            })}
           </List>
           <Divider />
-          <ChatForm recipientId={selectedUserId} />
+          <ChatForm recipientId={selectedUserId.id} />
         </Grid>
       </Grid>
     </div>

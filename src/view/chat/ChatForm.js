@@ -23,7 +23,6 @@ const ChatForm = ({ recipientId }) => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log("hiiiii", values);
       messageAction(values);
       restForm();
     },
