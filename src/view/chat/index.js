@@ -17,6 +17,7 @@ import UserContext from "../../context/user/UserContext";
 import ChatForm from "./ChatForm";
 import MessageContext from "../../context/message/MessageContext";
 import moment from "moment";
+import { socket } from "../../common/socket";
 
 const useStyles = makeStyles({
   table: {
@@ -47,6 +48,7 @@ const Chat = () => {
   const [allUsersState, setAllUsersState] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(0);
   const [userMessages, setUserMessages] = useState([]);
+  const [commonUserKey, setCommonUserId] = useState("");
 
   const scrollRef = useRef(null);
   const classes = useStyles();
@@ -79,8 +81,9 @@ const Chat = () => {
   }, [selectedUserId]);
 
   useEffect(() => {
-    if (user_messages) {
-      setUserMessages(user_messages);
+    if (user_messages && user_messages.data) {
+      setUserMessages(user_messages.data);
+      setCommonUserId(user_messages.userData.common_key);
     }
   }, [user_messages]);
 
@@ -93,6 +96,20 @@ const Chat = () => {
       });
     }
   });
+
+  useEffect(() => {
+    if (commonUserKey) {
+      socket.emit("join_room", { key: commonUserKey });
+    }
+  }, [commonUserKey]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("RECEIVE_MESSAGE", (data) => {
+        setUserMessages(data);
+      });
+    }
+  }, [socket]);
 
   return (
     <div>
@@ -184,7 +201,11 @@ const Chat = () => {
             })}
           </List>
           <Divider />
-          <ChatForm recipientId={selectedUserId.id} />
+          <ChatForm
+            recipientId={selectedUserId.id}
+            commonUserKey={commonUserKey}
+            userId={isUser.id}
+          />
         </Grid>
       </Grid>
     </div>

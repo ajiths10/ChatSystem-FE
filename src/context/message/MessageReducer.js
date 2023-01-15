@@ -1,4 +1,4 @@
-import { GET_ALL_MESSAGES, CLEAR_ALL } from "./MessageType";
+import { GET_ALL_MESSAGES, GET_ALL_RESPONSE, CLEAR_ALL } from "./MessageType";
 
 const MessageReducer = (state, action) => {
   switch (action.type) {
@@ -6,6 +6,11 @@ const MessageReducer = (state, action) => {
       return {
         ...state,
         user_messages: action.data,
+      };
+    case GET_ALL_RESPONSE:
+      return {
+        ...state,
+        response: action.data,
       };
 
     case CLEAR_ALL:

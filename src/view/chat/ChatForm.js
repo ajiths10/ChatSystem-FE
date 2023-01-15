@@ -8,9 +8,11 @@ import * as yup from "yup";
 import { Button } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MessageContext from "../../context/message/MessageContext";
+import { socket } from "../../common/socket";
 
-const ChatForm = ({ recipientId }) => {
-  const { getAllUserMessage, messageAction } = useContext(MessageContext);
+const ChatForm = ({ recipientId, commonUserKey, userId }) => {
+  const { getAllUserMessage, messageAction, response } =
+    useContext(MessageContext);
 
   const validationSchema = yup.object({
     message: yup.string().min(1, "required").required("required"),
@@ -19,7 +21,9 @@ const ChatForm = ({ recipientId }) => {
   const formik = useFormik({
     initialValues: {
       message: "",
+      userId: userId,
       recipientId: recipientId,
+      commonUserKey: commonUserKey,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -35,8 +39,17 @@ const ChatForm = ({ recipientId }) => {
 
   useEffect(() => {
     formik.values.recipientId = recipientId;
-  }, [recipientId]);
+    formik.values.commonUserKey = commonUserKey;
+    formik.values.userId = userId;
+  }, [recipientId, commonUserKey, userId]);
 
+  useEffect(() => {
+    if (response) {
+      socket.emit("MESSAGE_ACTION", {
+        ...formik.values,
+      });
+    }
+  }, [response]);
   return (
     <>
       <Grid container style={{ padding: "20px" }}>
