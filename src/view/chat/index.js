@@ -114,9 +114,13 @@ const Chat = () => {
   useEffect(() => {
     if (socket) {
       socket.on("RECEIVE_MESSAGE", function (data) {
-        if (data.key === commonUserKey) {
-          setUserMessages(data.response);
-        }
+        console.log("hiiii", data.response);
+        setUserMessages(data.response);
+
+        socket.emit("ACKNOWLEDGEMENT", {
+          key: data.key,
+          limit: global.limit,
+        });
       });
     }
   }, [socket, commonUserKey]);
