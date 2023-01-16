@@ -30,12 +30,24 @@ const useStyles = makeStyles({
   headBG: {
     backgroundColor: "#e0e0e0",
   },
+  list_items: {
+    backgroundColor: "#eeeeee",
+    margin: "2px",
+    borderRadius: "1rem",
+    // minWidth: "auto",
+    // maxWidth: "500px",
+    padding: "5px",
+    // height: "150px",
+  },
   borderRight500: {
     borderRight: "1px solid #e0e0e0",
   },
   messageArea: {
     height: "70vh",
     overflowY: "auto",
+  },
+  userName: {
+    fontWeight: "bold",
   },
 });
 
@@ -48,10 +60,16 @@ const Chat = () => {
   const [allUsersState, setAllUsersState] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(0);
   const [userMessages, setUserMessages] = useState([]);
-  const [commonUserKey, setCommonUserId] = useState("");
+  const [commonUserKey, setCommonUserId] = useState(0);
+  const [reload, setReload] = useState(false);
 
-  const scrollRef = useRef(null);
   const classes = useStyles();
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -69,50 +87,43 @@ const Chat = () => {
   }, [all_users]);
 
   useEffect(() => {
-    if (user) {
-      setUser(user);
-    }
-  }, [user]);
-
-  useEffect(() => {
     if (selectedUserId) {
-      getAllUserMessage({ recipientId: selectedUserId.id });
+      getAllUserMessage({
+        recipientId: selectedUserId.id,
+        limit: global.limit,
+      });
     }
   }, [selectedUserId]);
 
   useEffect(() => {
     if (user_messages && user_messages.data) {
+      socket.emit("disconnect_room", { key: commonUserKey });
       setUserMessages(user_messages.data);
       setCommonUserId(user_messages.userData.common_key);
+      setReload(!reload);
     }
   }, [user_messages]);
-
-  useEffect(() => {
-    if (scrollRef && scrollRef.current) {
-      scrollRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "nearest",
-      });
-    }
-  });
 
   useEffect(() => {
     if (commonUserKey) {
       socket.emit("join_room", { key: commonUserKey });
     }
+    setReload(!reload);
   }, [commonUserKey]);
 
   useEffect(() => {
     if (socket) {
-      socket.on("RECEIVE_MESSAGE", (data) => {
-        setUserMessages(data);
+      socket.on("RECEIVE_MESSAGE", function (data) {
+        if (data.key === commonUserKey) {
+          setUserMessages(data.response);
+        }
       });
     }
-  }, [socket]);
+  }, [socket, commonUserKey]);
 
   return (
     <div>
+      {reload ? null : null}
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h5" className="header-message">
@@ -176,12 +187,17 @@ const Chat = () => {
           </List>
         </Grid>
         <Grid item xs={9}>
-          <List className={classes.messageArea} ref={scrollRef}>
+          <List className={classes.messageArea}>
             {userMessages.map((spacedog) => {
               return (
                 <ListItem key={spacedog.id}>
-                  <Grid container>
+                  <Grid container className={classes.list_items}>
                     <Grid item xs={12}>
+                      <ListItemText
+                        className={classes.userName}
+                        align={isUser.id === spacedog.userid ? "left" : "right"}
+                        primary={spacedog.name}
+                      ></ListItemText>
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
                         primary={spacedog.message}
@@ -190,9 +206,11 @@ const Chat = () => {
                     <Grid item xs={12}>
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
-                        secondary={moment(spacedog.created_at).format(
-                          "hh:mm:ss a"
-                        )}
+                        secondary={
+                          moment(spacedog.created_at).format("hh:mm") +
+                          " " +
+                          spacedog.status
+                        }
                       ></ListItemText>
                     </Grid>
                   </Grid>

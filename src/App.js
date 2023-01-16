@@ -10,7 +10,7 @@ import { socket } from "./common/socket";
 const App = () => {
   global.domainURL = process.env.REACT_APP_DOMAIN;
   global.UserToken = localStorage.getItem("UserToken");
-
+  global.limit = 7;
   // useEffect(() => {
   //   socket.emit("data_send", { message: "Hello server" });
   // }, []);

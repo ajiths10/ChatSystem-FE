@@ -24,6 +24,7 @@ const ChatForm = ({ recipientId, commonUserKey, userId }) => {
       userId: userId,
       recipientId: recipientId,
       commonUserKey: commonUserKey,
+      limit: global.limit,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -40,16 +41,19 @@ const ChatForm = ({ recipientId, commonUserKey, userId }) => {
   useEffect(() => {
     formik.values.recipientId = recipientId;
     formik.values.commonUserKey = commonUserKey;
+    formik.setFieldValue("commonUserKey", commonUserKey);
     formik.values.userId = userId;
   }, [recipientId, commonUserKey, userId]);
 
   useEffect(() => {
     if (response) {
+      getAllUserMessage({ recipientId: recipientId, limit: global.limit });
       socket.emit("MESSAGE_ACTION", {
         ...formik.values,
       });
     }
   }, [response]);
+
   return (
     <>
       <Grid container style={{ padding: "20px" }}>
