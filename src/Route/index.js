@@ -6,15 +6,21 @@ import Chat from "../view/chat";
 import PrivateRoute from "./PrivateRoute";
 import ReversePrivateRoute from "./ReversePrivateRoute";
 import UserContext from "../context/user/UserContext";
+import { useSelector } from "react-redux";
 
 const RouteIndex = () => {
   const { VerifyUser, isAuthenticated } = useContext(UserContext);
+  const ReduxAuth = useSelector(
+    (state) => state.userAthenticated.isAuthenticated
+  );
 
   useEffect(() => {
     if (global.UserToken && !isAuthenticated) {
       VerifyUser({ userId: global.UserToken });
     }
   }, [isAuthenticated, global.UserToken]);
+
+  console.log("Redux console", ReduxAuth);
 
   return (
     <>

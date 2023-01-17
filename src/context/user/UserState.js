@@ -1,4 +1,6 @@
 import React, { useContext, useReducer } from "react";
+import { useDispatch } from "react-redux";
+import { authAction } from "../../redux/userAthenticate";
 import { useNavigate } from "react-router-dom";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
@@ -19,6 +21,8 @@ const initialState = {
 };
 
 const UserState = (props) => {
+  const reduxDispatch = useDispatch();
+
   const history = useNavigate();
   const { setAlert } = useContext(Commonontext);
   const [state, dispatch] = useReducer(UserReducer, initialState);
@@ -28,6 +32,7 @@ const UserState = (props) => {
 
     if (res.data.status) {
       dispatch({ type: USER_AUTHENTICATED, data: res.data.data });
+      reduxDispatch(authAction.Authenticate(true));
     } else {
       setAlert(res.data);
       dispatch({ type: USER_AUTHENTICATED, data: false });
