@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -18,6 +17,7 @@ import ChatForm from "./ChatForm";
 import MessageContext from "../../context/message/MessageContext";
 import moment from "moment";
 import { socket } from "../../common/socket";
+import { Typography } from "@mui/material";
 
 const useStyles = makeStyles({
   table: {
@@ -43,11 +43,12 @@ const useStyles = makeStyles({
     borderRight: "1px solid #e0e0e0",
   },
   messageArea: {
-    height: "70vh",
+    height: "80vh",
     overflowY: "auto",
   },
   userName: {
     fontWeight: "bold",
+    fontSize: "30px",
   },
 });
 
@@ -97,7 +98,9 @@ const Chat = () => {
 
   useEffect(() => {
     if (user_messages && user_messages.data) {
-      socket.emit("disconnect_room", { key: commonUserKey });
+      if (commonUserKey && commonUserKey != user_messages.userData.common_key) {
+        socket.emit("disconnect_room", { key: commonUserKey });
+      }
       setUserMessages(user_messages.data);
       setCommonUserId(user_messages.userData.common_key);
       setReload(!reload);
@@ -106,7 +109,9 @@ const Chat = () => {
 
   useEffect(() => {
     if (commonUserKey) {
-      socket.emit("join_room", { key: commonUserKey });
+      setTimeout(() => {
+        socket.emit("join_room", { key: commonUserKey });
+      }, 1000);
     }
     setReload(!reload);
   }, [commonUserKey]);
@@ -114,7 +119,6 @@ const Chat = () => {
   useEffect(() => {
     if (socket) {
       socket.on("RECEIVE_MESSAGE", function (data) {
-        console.log("hiiii", data.response);
         setUserMessages(data.response);
 
         socket.emit("ACKNOWLEDGEMENT", {
@@ -122,8 +126,19 @@ const Chat = () => {
           limit: global.limit,
         });
       });
+
+      socket.on("ACKNOWLEDGEMENT_RESPONSE", (data) => {
+        setUserMessages(data.newData);
+      });
     }
   }, [socket, commonUserKey]);
+
+  const dummy = useRef(null);
+  useEffect(() => {
+    if (dummy && dummy.current) {
+      dummy.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [userMessages]);
 
   return (
     <div>
@@ -135,7 +150,8 @@ const Chat = () => {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container component={Paper} className={classes.chatSection}>
+      <Divider />
+      <Grid container className={classes.chatSection}>
         <Grid item xs={3} className={classes.borderRight500}>
           <List>
             <ListItem button key={isUser.name}>
@@ -148,10 +164,14 @@ const Chat = () => {
                   {isUser.name ? isUser.name.charAt(0) : "A"}
                 </Avatar>
               </ListItemIcon>
-              <ListItemText primary={isUser.name}></ListItemText>
+              <ListItemText>
+                <Typography variant="h5" className="header-message">
+                  {isUser.name}
+                </Typography>
+              </ListItemText>
             </ListItem>
           </List>
-          <Divider />
+
           <Grid item xs={12} style={{ padding: "10px" }}>
             <TextField
               id="outlined-basic-email"
@@ -160,7 +180,7 @@ const Chat = () => {
               fullWidth
             />
           </Grid>
-          <Divider />
+
           <List>
             {allUsersState.map((buscat, index) => {
               return (
@@ -192,30 +212,52 @@ const Chat = () => {
         </Grid>
         <Grid item xs={9}>
           <List className={classes.messageArea}>
-            {userMessages.map((spacedog) => {
+            {userMessages.map((spacedog, index) => {
               return (
                 <ListItem key={spacedog.id}>
                   <Grid container className={classes.list_items}>
                     <Grid item xs={12}>
                       <ListItemText
-                        className={classes.userName}
                         align={isUser.id === spacedog.userid ? "left" : "right"}
-                        primary={spacedog.name}
-                      ></ListItemText>
+                      >
+                        <Typography
+                          variant="overline"
+                          className={classes.userName}
+                        >
+                          {spacedog.name}
+                        </Typography>
+                      </ListItemText>
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
-                        primary={spacedog.message}
-                      ></ListItemText>
+                      >
+                        <Typography
+                          variant="button"
+                          className={classes.userName}
+                        >
+                          {spacedog.message}
+                        </Typography>
+                      </ListItemText>
                     </Grid>
                     <Grid item xs={12}>
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
-                        secondary={
-                          moment(spacedog.created_at).format("hh:mm") +
-                          " " +
-                          spacedog.status
-                        }
-                      ></ListItemText>
+                      >
+                        <Typography
+                          variant="caption"
+                          className={classes.userName}
+                        >
+                          {isUser.id === spacedog.userid
+                            ? moment(spacedog.created_at).format("hh:mm")
+                            : moment(spacedog.created_at).format("hh:mm") +
+                              " " +
+                              spacedog.status}
+                        </Typography>
+                        {userMessages.length === index + 1 ? (
+                          <div ref={dummy} />
+                        ) : (
+                          <></>
+                        )}
+                      </ListItemText>
                     </Grid>
                   </Grid>
                 </ListItem>
