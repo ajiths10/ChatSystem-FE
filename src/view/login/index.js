@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -23,6 +23,8 @@ const Login = () => {
   const history = useNavigate();
   const { LoginUser, response } = useContext(UserContext);
 
+  const [btnDisabled, setBtnDisabled] = useState(false);
+
   const validationSchema = yup.object({
     email: yup
       .string("Enter your email")
@@ -43,11 +45,17 @@ const Login = () => {
     onSubmit: (values) => {
       //alert(JSON.stringify(values, null, 2));
       //history("/");
+      setBtnDisabled(true);
       LoginUser(values);
       // localStorage.setItem("UserEmail", values.email);
     },
   });
 
+  useEffect(() => {
+    return () => {
+      setBtnDisabled(false);
+    };
+  }, [response]);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -109,6 +117,7 @@ const Login = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={btnDisabled}
             >
               Login
             </Button>

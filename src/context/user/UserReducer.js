@@ -3,6 +3,7 @@ import {
   USER_LOGIN,
   USER_AUTHENTICATED,
   USER_ALL_USERS,
+  USER_LOG_OUT,
   CLEAR_ALL,
 } from "./UserType";
 
@@ -29,7 +30,13 @@ const UserReducer = (state, action) => {
         ...state,
         all_users: action.data,
       };
-
+    case USER_LOG_OUT:
+      return {
+        isAuthenticated: false,
+        user: [],
+        all_users: [],
+        response: "",
+      };
     case CLEAR_ALL:
       return (state = "");
     default:

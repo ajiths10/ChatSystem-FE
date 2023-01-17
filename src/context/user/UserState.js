@@ -11,6 +11,7 @@ import {
   USER_LOGIN,
   USER_AUTHENTICATED,
   USER_ALL_USERS,
+  USER_LOG_OUT,
   CLEAR_ALL,
 } from "./UserType";
 const initialState = {
@@ -34,11 +35,7 @@ const UserState = (props) => {
       dispatch({ type: USER_AUTHENTICATED, data: res.data.data });
       reduxDispatch(authAction.Authenticate(true));
     } else {
-      setAlert(res.data);
-      dispatch({ type: USER_AUTHENTICATED, data: false });
-      global.UserToken = false;
-      localStorage.setItem("UserToken", "");
-      history("/login");
+      userLogout(true, res.data);
     }
   };
 
@@ -73,6 +70,18 @@ const UserState = (props) => {
     dispatch({ type: USER_ALL_USERS, data: res.data.data });
   };
 
+  const userLogout = (noAlert, secondaryData) => {
+    if (noAlert) {
+    } else {
+      setAlert({ status: 1, message: "User logging out !!" });
+    }
+    reduxDispatch(authAction.Authenticate(false));
+    dispatch({ type: USER_LOG_OUT, data: false });
+    global.UserToken = false;
+    localStorage.setItem("UserToken", "");
+    history("/login");
+  };
+
   const clearAll = () => {
     dispatch({ type: CLEAR_ALL });
   };
@@ -88,6 +97,7 @@ const UserState = (props) => {
         LoginUser,
         VerifyUser,
         getAllUSers,
+        userLogout,
         clearAll,
       }}
     >

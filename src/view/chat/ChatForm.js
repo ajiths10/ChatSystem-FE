@@ -55,7 +55,7 @@ const ChatForm = ({ recipientId, commonUserKey, userId }) => {
   }, [response]);
 
   return (
-    <>
+    <form onSubmit={formik.handleSubmit}>
       <Grid container style={{ padding: "20px" }}>
         <Grid item xs={11}>
           <TextField
@@ -71,18 +71,14 @@ const ChatForm = ({ recipientId, commonUserKey, userId }) => {
         </Grid>
         <Grid xs={1} align="right">
           <Fab aria-label="add">
-            <Button
-              onClick={() => {
-                formik.handleSubmit();
-              }}
-            >
+            <Button type="submit">
               {" "}
               <SendIcon />
             </Button>
           </Fab>
         </Grid>
       </Grid>
-    </>
+    </form>
   );
 };
 

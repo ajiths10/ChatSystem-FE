@@ -18,6 +18,11 @@ import MessageContext from "../../context/message/MessageContext";
 import moment from "moment";
 import { socket } from "../../common/socket";
 import { Typography } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import { Button } from "@material-ui/core";
 
 const useStyles = makeStyles({
   table: {
@@ -50,10 +55,18 @@ const useStyles = makeStyles({
     fontWeight: "bold",
     fontSize: "30px",
   },
+  profileBtn: {
+    width: "100%",
+    height: "100%",
+  },
+  profileContainer: {
+    margin: "0",
+    padding: "0",
+  },
 });
 
 const Chat = () => {
-  const { getAllUSers, all_users, user, isAuthenticated } =
+  const { getAllUSers, all_users, user, isAuthenticated, userLogout } =
     useContext(UserContext);
   const { getAllUserMessage, user_messages } = useContext(MessageContext);
 
@@ -63,6 +76,8 @@ const Chat = () => {
   const [userMessages, setUserMessages] = useState([]);
   const [commonUserKey, setCommonUserId] = useState(0);
   const [reload, setReload] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState(false);
+  const dummy = useRef(null);
 
   const classes = useStyles();
 
@@ -131,14 +146,33 @@ const Chat = () => {
         setUserMessages(data.newData);
       });
     }
+    setReload(!reload);
   }, [socket, commonUserKey]);
 
-  const dummy = useRef(null);
   useEffect(() => {
     if (dummy && dummy.current) {
       dummy.current.scrollIntoView({ behavior: "smooth" });
     }
+    setReload(!reload);
   }, [userMessages]);
+
+  const handleOpenUserMenu = () => {
+    setAnchorElUser(true);
+    setReload(!reload);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(false);
+  };
+
+  const settings = [
+    <Button className={classes.profileBtn} onClick={handleCloseUserMenu}>
+      <span class="material-icons">admin_panel_settings</span>&nbsp; profile
+    </Button>,
+    <Button className={classes.profileBtn} onClick={userLogout}>
+      <span class="material-icons">logout</span>&nbsp; Logout
+    </Button>,
+  ];
 
   return (
     <div>
@@ -156,15 +190,43 @@ const Chat = () => {
           <List>
             <ListItem button key={isUser.name}>
               <ListItemIcon>
-                <Avatar
-                  style={{
-                    backgroundColor: randomColor(),
-                  }}
-                >
-                  {isUser.name ? isUser.name.charAt(0) : "A"}
-                </Avatar>
+                <Box sx={{ flexGrow: 0 }}>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar
+                        alt="profile"
+                        style={{
+                          backgroundColor: randomColor(),
+                        }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: "45px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    {settings.map((buscat, index) => (
+                      <MenuItem key={index} onClick={() => {}}>
+                        {buscat}
+                        {/* <Typography textAlign="center">{buscat}</Typography> */}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
               </ListItemIcon>
-              <ListItemText>
+              <ListItemText onClick={handleOpenUserMenu}>
                 <Typography variant="h5" className="header-message">
                   {isUser.name}
                 </Typography>
@@ -197,9 +259,7 @@ const Chat = () => {
                       style={{
                         backgroundColor: randomColor(),
                       }}
-                    >
-                      {buscat.name.charAt(0)}
-                    </Avatar>
+                    />
                   </ListItemIcon>
                   <ListItemText primary={buscat.name}>
                     {buscat.name}
@@ -220,20 +280,14 @@ const Chat = () => {
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
                       >
-                        <Typography
-                          variant="overline"
-                          className={classes.userName}
-                        >
+                        <Typography variant="overline">
                           {spacedog.name}
                         </Typography>
                       </ListItemText>
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
                       >
-                        <Typography
-                          variant="button"
-                          className={classes.userName}
-                        >
+                        <Typography variant="button">
                           {spacedog.message}
                         </Typography>
                       </ListItemText>
@@ -242,10 +296,7 @@ const Chat = () => {
                       <ListItemText
                         align={isUser.id === spacedog.userid ? "left" : "right"}
                       >
-                        <Typography
-                          variant="caption"
-                          className={classes.userName}
-                        >
+                        <Typography variant="caption">
                           {isUser.id === spacedog.userid
                             ? moment(spacedog.created_at).format("hh:mm")
                             : moment(spacedog.created_at).format("hh:mm") +
