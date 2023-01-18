@@ -52,7 +52,7 @@ const Chat = () => {
   const [commonUserKey, setCommonUserId] = useState(0);
   const [reload, setReload] = useState(false);
 
-  const dummy = useRef(null);
+  const lastChildRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -98,9 +98,10 @@ const Chat = () => {
     setReload(!reload);
   }, [socket, commonUserKey]);
 
+  //Always point towards the last message element
   useEffect(() => {
-    if (dummy && dummy.current) {
-      dummy.current.scrollIntoView({ behavior: "smooth" });
+    if (lastChildRef && lastChildRef.current) {
+      lastChildRef.current.scrollIntoView({ behavior: "smooth" });
     }
     setReload(!reload);
   }, [userMessages]);
@@ -156,7 +157,7 @@ const Chat = () => {
                               spacedog.status}
                         </Typography>
                         {userMessages.length === index + 1 ? (
-                          <div ref={dummy} />
+                          <div ref={lastChildRef} />
                         ) : (
                           <></>
                         )}

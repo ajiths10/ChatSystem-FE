@@ -120,7 +120,7 @@ const SideBar = (props) => {
                   onClose={handleCloseUserMenu}
                 >
                   {settings.map((buscat, index) => (
-                    <MenuItem key={index} onClick={() => {}}>
+                    <MenuItem key={index}>
                       {buscat}
                       {/* <Typography textAlign="center">{buscat}</Typography> */}
                     </MenuItem>
