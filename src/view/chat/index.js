@@ -131,14 +131,14 @@ const Chat = () => {
                   <Grid container className={classes.list_items}>
                     <Grid item xs={12}>
                       <ListItemText
-                        align={isUser.id === spacedog.userid ? "left" : "right"}
+                        align={isUser.id === spacedog.userid ? "right" : "left"}
                       >
                         <Typography variant="overline">
                           {spacedog.name}
                         </Typography>
                       </ListItemText>
                       <ListItemText
-                        align={isUser.id === spacedog.userid ? "left" : "right"}
+                        align={isUser.id === spacedog.userid ? "right" : "left"}
                       >
                         <Typography variant="button">
                           {spacedog.message}
@@ -147,14 +147,14 @@ const Chat = () => {
                     </Grid>
                     <Grid item xs={12}>
                       <ListItemText
-                        align={isUser.id === spacedog.userid ? "left" : "right"}
+                        align={isUser.id === spacedog.userid ? "right" : "left"}
                       >
                         <Typography variant="caption">
                           {isUser.id === spacedog.userid
-                            ? moment(spacedog.created_at).format("hh:mm a")
-                            : moment(spacedog.created_at).format("hh:mm a") +
+                            ? moment(spacedog.created_at).format("hh:mm a") +
                               " " +
-                              spacedog.status}
+                              spacedog.status
+                            : moment(spacedog.created_at).format("hh:mm a")}
                         </Typography>
                         {userMessages.length === index + 1 ? (
                           <div ref={lastChildRef} />
