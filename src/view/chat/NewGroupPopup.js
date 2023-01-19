@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,8 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,6 +45,19 @@ const NewGroupPopup = (props) => {
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
 
+  const validationSchema = yup.object({
+    name: yup.string().required("required"),
+    userids: yup.array().min(1, "required").required("required"),
+  });
+
+  const formik = useFormik({
+    initialValues: { name: "", userids: [] },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log("hiiiii", values);
+    },
+  });
+
   const handleClose = () => {
     setPopup(false);
   };
@@ -57,15 +72,28 @@ const NewGroupPopup = (props) => {
     );
   };
 
+  useEffect(() => {
+    if (personName) {
+      formik.setFieldValue("userids", personName);
+      //   formik.values.userids = personName;
+    }
+  }, [personName]);
+
+  const fetchName = (id) => {
+    let index = allUsersState.findIndex((element) => element.id == id);
+    return allUsersState[index].name;
+  };
+
   return (
     <div>
       <Dialog open={isPopup} onClose={handleClose}>
         <DialogTitle>Create New Group</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Select the users to create a new group.
-          </DialogContentText>
-          <form>
+        <form onSubmit={formik.handleSubmit}>
+          <DialogContent>
+            <DialogContentText>
+              Select the users to create a new group.
+            </DialogContentText>
+
             <FormControl sx={{ m: 1, width: 500 }}>
               <TextField
                 id="filled-basic"
@@ -73,6 +101,12 @@ const NewGroupPopup = (props) => {
                 margin="dense"
                 placeholder="Group Name"
                 xs={12}
+                name="name"
+                autoFocus
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
               />
             </FormControl>
             <FormControl sx={{ m: 1, width: 500 }}>
@@ -80,40 +114,47 @@ const NewGroupPopup = (props) => {
                 Select users
               </InputLabel>
               <Select
+                name="userids"
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
                 xs={12}
+                margin="dense"
                 multiple
-                value={personName}
                 onChange={handleChange}
                 input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
-                      <Chip key={value} label={value} />
+                      <Chip key={value} label={fetchName(value)} />
                     ))}
                   </Box>
                 )}
                 MenuProps={MenuProps}
+                value={formik.values.userids}
+                error={formik.touched.userids && Boolean(formik.errors.userids)}
+                helperText={formik.touched.userids && formik.errors.userids}
               >
                 {allUsersState.map((name) => (
                   <MenuItem
                     key={name.id}
-                    value={name.name}
+                    value={name.id}
                     style={getStyles(name.name, personName, theme)}
                   >
-                    <Checkbox checked={personName.indexOf(name.name) > -1} />
+                    <Checkbox checked={personName.indexOf(name.id) > -1} />
                     <ListItemText primary={name.name} />
                   </MenuItem>
                 ))}
               </Select>
+              {formik.touched.userids && Boolean(formik.errors.userids)
+                ? formik.touched.userids && formik.errors.userids
+                : null}
             </FormControl>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Create</Button>
-        </DialogActions>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit">Create</Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   );
