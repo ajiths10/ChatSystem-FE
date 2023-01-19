@@ -19,6 +19,8 @@ import UserContext from "../../context/user/UserContext";
 import MessageContext from "../../context/message/MessageContext";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Fab from "@mui/material/Fab";
+import NewGroupPopup from "./NewGroupPopup";
 
 const useStyles = makeStyles({
   borderRight500: {
@@ -43,6 +45,7 @@ const SideBar = (props) => {
   const [reload, setReload] = useState(false);
   const [allUsersState, setAllUsersState] = useState([]);
   const [tabValue, setTabValue] = useState("user");
+  const [newGroupPopup, setNewGroupPopup] = useState(false);
 
   const settings = [
     <Button className={classes.profileBtn} onClick={handleCloseUserMenu}>
@@ -137,6 +140,18 @@ const SideBar = (props) => {
         </List>
 
         <Grid item xs={12} style={{ padding: "10px" }}>
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="add"
+            variant="circular"
+            onClick={() => {
+              setNewGroupPopup(true);
+            }}
+          >
+            <span class="material-icons">group_add</span>
+          </Fab>{" "}
+          &nbsp;
           <ToggleButtonGroup
             color="primary"
             value={tabValue}
@@ -187,6 +202,11 @@ const SideBar = (props) => {
           })}
         </List>
       </Grid>
+      <NewGroupPopup
+        setPopup={setNewGroupPopup}
+        isPopup={newGroupPopup}
+        allUsersState={allUsersState}
+      />
     </>
   );
 };
