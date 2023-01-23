@@ -1,4 +1,9 @@
-import { GET_ALL_MESSAGES, GET_ALL_RESPONSE, CLEAR_ALL } from "./MessageType";
+import {
+  GET_ALL_MESSAGES,
+  GET_ALL_RESPONSE,
+  GET_NEW_GROUP_RESPONSE,
+  CLEAR_ALL,
+} from "./MessageType";
 
 const MessageReducer = (state, action) => {
   switch (action.type) {
@@ -11,6 +16,11 @@ const MessageReducer = (state, action) => {
       return {
         ...state,
         response: action.data,
+      };
+    case GET_NEW_GROUP_RESPONSE:
+      return {
+        ...state,
+        newGroupeResponse: action.data,
       };
 
     case CLEAR_ALL:

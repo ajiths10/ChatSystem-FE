@@ -4,8 +4,13 @@ import MessageContext from "./MessageContext";
 import MessageReducer from "./MessageReducer";
 import Commonontext from "../common/CommonContext";
 import { api } from "../../common/api";
-import { GET_ALL_MESSAGES, GET_ALL_RESPONSE, CLEAR_ALL } from "./MessageType";
-const initialState = { user_messages: [], response: "" };
+import {
+  GET_ALL_MESSAGES,
+  GET_ALL_RESPONSE,
+  GET_NEW_GROUP_RESPONSE,
+  CLEAR_ALL,
+} from "./MessageType";
+const initialState = { user_messages: [], response: "", newGroupeResponse: "" };
 
 const MessageState = (props) => {
   const history = useNavigate();
@@ -21,9 +26,13 @@ const MessageState = (props) => {
   const messageAction = async (formData) => {
     const res = await api(formData, "/message/send");
     setAlert(res.data);
-    dispatch({ type: GET_ALL_RESPONSE, data: res.data });
   };
 
+  const addNewGroup = async (formData) => {
+    const res = await api(formData, "/group/newgroup");
+    setAlert(res.data);
+    dispatch({ type: GET_NEW_GROUP_RESPONSE, data: res.data });
+  };
   const clearAll = () => {
     dispatch({ type: CLEAR_ALL });
   };
@@ -33,8 +42,10 @@ const MessageState = (props) => {
       value={{
         response: state.response,
         user_messages: state.user_messages,
+        newGroupeResponse: state.newGroupeResponse,
         getAllUserMessage,
         messageAction,
+        addNewGroup,
         clearAll,
       }}
     >

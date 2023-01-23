@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -18,6 +18,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import MessageContext from "../../context/message/MessageContext";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -42,6 +43,8 @@ function getStyles(name, personName, theme) {
 const NewGroupPopup = (props) => {
   const { isPopup, setPopup, allUsersState } = props;
 
+  const { addNewGroup, newGroupeResponse } = useContext(MessageContext);
+
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
 
@@ -55,6 +58,7 @@ const NewGroupPopup = (props) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log("hiiiii", values);
+      addNewGroup(values);
     },
   });
 
@@ -83,6 +87,14 @@ const NewGroupPopup = (props) => {
     let index = allUsersState.findIndex((element) => element.id == id);
     return allUsersState[index].name;
   };
+
+  useEffect(() => {
+    if (newGroupeResponse) {
+      if (newGroupeResponse.status) {
+        handleClose();
+      }
+    }
+  }, [newGroupeResponse]);
 
   return (
     <div>
