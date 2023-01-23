@@ -7,10 +7,16 @@ import { api } from "../../common/api";
 import {
   GET_ALL_MESSAGES,
   GET_ALL_RESPONSE,
+  GET_ALL_GROUPS,
   GET_NEW_GROUP_RESPONSE,
   CLEAR_ALL,
 } from "./MessageType";
-const initialState = { user_messages: [], response: "", newGroupeResponse: "" };
+const initialState = {
+  user_messages: [],
+  user_groups: [],
+  response: "",
+  newGroupeResponse: "",
+};
 
 const MessageState = (props) => {
   const history = useNavigate();
@@ -33,6 +39,13 @@ const MessageState = (props) => {
     setAlert(res.data);
     dispatch({ type: GET_NEW_GROUP_RESPONSE, data: res.data });
   };
+
+  const getUserGroups = async (formData) => {
+    const res = await api(formData, "/group//usergroup");
+    // setAlert(res.data);
+    dispatch({ type: GET_ALL_GROUPS, data: res.data });
+  };
+
   const clearAll = () => {
     dispatch({ type: CLEAR_ALL });
   };
@@ -41,10 +54,12 @@ const MessageState = (props) => {
     <MessageContext.Provider
       value={{
         response: state.response,
+        user_groups: state.user_groups,
         user_messages: state.user_messages,
         newGroupeResponse: state.newGroupeResponse,
         getAllUserMessage,
         messageAction,
+        getUserGroups,
         addNewGroup,
         clearAll,
       }}

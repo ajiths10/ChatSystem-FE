@@ -39,7 +39,8 @@ const SideBar = (props) => {
 
   const { getAllUSers, all_users, user, isAuthenticated, userLogout } =
     useContext(UserContext);
-  const { getAllUserMessage, user_messages } = useContext(MessageContext);
+  const { getAllUserMessage, user_messages, getUserGroups, user_groups } =
+    useContext(MessageContext);
 
   const [anchorElUser, setAnchorElUser] = useState(false);
   const [reload, setReload] = useState(false);
@@ -72,22 +73,36 @@ const SideBar = (props) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (all_users) {
-      setAllUsersState(all_users);
-      if (all_users[0] && all_users[0]) {
-        setSelectedUserId(all_users[0]);
+    if (tabValue === "user") {
+      if (all_users) {
+        setAllUsersState(all_users);
+        if (all_users[0]) {
+          setSelectedUserId(all_users[0]);
+        }
+      }
+    } else if (tabValue === "group") {
+      if (user_groups && user_groups.data) {
+        let values = user_groups.data;
+        setAllUsersState(values);
+        if (values[0] && !selectedUserId.id === values[0].id) {
+          setSelectedUserId(values[0]);
+        }
       }
     }
-  }, [all_users]);
+  }, [all_users, user_groups]);
 
   useEffect(() => {
     if (selectedUserId && isAuthenticated && user) {
-      getAllUserMessage({
-        recipientId: selectedUserId.id,
-        limit: global.limit,
-      });
+      if (tabValue === "user") {
+        getAllUserMessage({
+          recipientId: selectedUserId.id,
+          limit: global.limit,
+        });
+      } else if (tabValue === "group") {
+        getUserGroups();
+      }
     }
-  }, [selectedUserId, isAuthenticated]);
+  }, [selectedUserId, isAuthenticated, tabValue]);
 
   return (
     <>

@@ -62,8 +62,15 @@ const NewGroupPopup = (props) => {
     },
   });
 
+  const RestFormik = () => {
+    setPersonName([]);
+    formik.setFieldValue("userids", []);
+    formik.setFieldValue("name", "");
+  };
+
   const handleClose = () => {
     setPopup(false);
+    RestFormik();
   };
 
   const handleChange = (event) => {
