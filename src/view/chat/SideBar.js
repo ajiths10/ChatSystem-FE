@@ -35,17 +35,22 @@ const useStyles = makeStyles({
 const SideBar = (props) => {
   const classes = useStyles();
 
-  const { isUser, selectedUserId, setSelectedUserId } = props;
+  const { isUser, selectedUserId, setSelectedUserId, tabValue, setTabValue } =
+    props;
 
   const { getAllUSers, all_users, user, isAuthenticated, userLogout } =
     useContext(UserContext);
-  const { getAllUserMessage, user_messages, getUserGroups, user_groups } =
-    useContext(MessageContext);
+  const {
+    getAllUserMessage,
+    user_messages,
+    getUserGroups,
+    user_groups,
+    newGroupeResponse,
+  } = useContext(MessageContext);
 
   const [anchorElUser, setAnchorElUser] = useState(false);
   const [reload, setReload] = useState(false);
   const [allUsersState, setAllUsersState] = useState([]);
-  const [tabValue, setTabValue] = useState("user");
   const [newGroupPopup, setNewGroupPopup] = useState(false);
 
   const settings = [
@@ -82,14 +87,16 @@ const SideBar = (props) => {
       }
     } else if (tabValue === "group") {
       if (user_groups && user_groups.data) {
-        let values = user_groups.data;
-        setAllUsersState(values);
-        if (values[0] && !selectedUserId.id === values[0].id) {
-          setSelectedUserId(values[0]);
+        setAllUsersState(user_groups.data);
+        if (
+          user_groups.data[0] &&
+          !selectedUserId.id === user_groups.data[0].id
+        ) {
+          setSelectedUserId(user_groups.data[0]);
         }
       }
     }
-  }, [all_users, user_groups]);
+  }, [all_users, user_groups, tabValue]);
 
   useEffect(() => {
     if (selectedUserId && isAuthenticated && user) {
@@ -102,13 +109,13 @@ const SideBar = (props) => {
         getUserGroups();
       }
     }
-  }, [selectedUserId, isAuthenticated, tabValue]);
+  }, [selectedUserId, isAuthenticated, tabValue, newGroupeResponse]);
 
   return (
     <>
       <Grid item xs={3} className={classes.borderRight500}>
         <List>
-          <ListItem button key={isUser.name}>
+          <ListItem button key={isUser.id}>
             <ListItemIcon>
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
@@ -197,7 +204,7 @@ const SideBar = (props) => {
             return (
               <ListItem
                 button
-                key={buscat.name}
+                key={buscat.id}
                 selected={selectedUserId.id === buscat.id ? true : false}
                 onClick={() => {
                   setSelectedUserId(buscat);
@@ -220,7 +227,7 @@ const SideBar = (props) => {
       <NewGroupPopup
         setPopup={setNewGroupPopup}
         isPopup={newGroupPopup}
-        allUsersState={allUsersState}
+        allUsersState={all_users}
       />
     </>
   );

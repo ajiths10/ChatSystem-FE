@@ -51,6 +51,7 @@ const Chat = () => {
   const [userMessages, setUserMessages] = useState([]);
   const [commonUserKey, setCommonUserId] = useState(0);
   const [reload, setReload] = useState(false);
+  const [tabValue, setTabValue] = useState("user");
 
   const lastChildRef = useRef(null);
 
@@ -122,6 +123,8 @@ const Chat = () => {
           isUser={isUser}
           setSelectedUserId={setSelectedUserId}
           selectedUserId={selectedUserId}
+          tabValue={tabValue}
+          setTabValue={setTabValue}
         />
         <Grid item xs={9}>
           <List className={classes.messageArea}>
@@ -173,6 +176,7 @@ const Chat = () => {
             recipientId={selectedUserId.id}
             commonUserKey={commonUserKey}
             userId={isUser.id}
+            tabValue={tabValue}
           />
         </Grid>
       </Grid>
