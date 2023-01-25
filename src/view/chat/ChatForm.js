@@ -10,8 +10,8 @@ import SendIcon from "@mui/icons-material/Send";
 import MessageContext from "../../context/message/MessageContext";
 import { socket } from "../../common/socket";
 
-const ChatForm = ({ recipientId, commonUserKey, userId }) => {
-  const { getAllUserMessage, messageAction, response } =
+const ChatForm = ({ recipientId, commonUserKey, userId, tabValue }) => {
+  const { getAllUserMessage, getAllUserGroupMessage, messageAction, response } =
     useContext(MessageContext);
 
   const validationSchema = yup.object({
@@ -24,6 +24,7 @@ const ChatForm = ({ recipientId, commonUserKey, userId }) => {
       userId: userId,
       recipientId: recipientId,
       commonUserKey: commonUserKey,
+      type: tabValue,
       limit: global.limit,
     },
     validationSchema: validationSchema,
@@ -43,16 +44,26 @@ const ChatForm = ({ recipientId, commonUserKey, userId }) => {
     formik.values.commonUserKey = commonUserKey;
     formik.setFieldValue("commonUserKey", commonUserKey);
     formik.values.userId = userId;
-  }, [recipientId, commonUserKey, userId]);
+    formik.values.type = tabValue;
+    formik.setFieldValue("type", tabValue);
+  }, [recipientId, commonUserKey, userId, tabValue]);
 
   useEffect(() => {
     if (response) {
-      getAllUserMessage({ recipientId: recipientId, limit: global.limit });
-      socket.emit("MESSAGE_ACTION", {
-        ...formik.values,
-      });
+      if (tabValue === "user") {
+        getAllUserMessage({ recipientId: recipientId, limit: global.limit });
+        socket.emit("MESSAGE_ACTION", {
+          ...formik.values,
+        });
+      }
+      if (tabValue === "group") {
+        getAllUserGroupMessage({
+          recipientId: recipientId,
+          limit: global.limit,
+        });
+      }
     }
-  }, [response]);
+  }, [response, tabValue]);
 
   return (
     <form onSubmit={formik.handleSubmit}>

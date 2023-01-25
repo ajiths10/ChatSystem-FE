@@ -35,17 +35,23 @@ const useStyles = makeStyles({
 const SideBar = (props) => {
   const classes = useStyles();
 
-  const { isUser, selectedUserId, setSelectedUserId, tabValue, setTabValue } =
-    props;
+  const {
+    isUser,
+    selectedUserId,
+    setSelectedUserId,
+    tabValue,
+    setTabValue,
+    setUserMessages,
+  } = props;
 
   const { getAllUSers, all_users, user, isAuthenticated, userLogout } =
     useContext(UserContext);
   const {
     getAllUserMessage,
-    user_messages,
     getUserGroups,
     user_groups,
     newGroupeResponse,
+    getAllUserGroupMessage,
   } = useContext(MessageContext);
 
   const [anchorElUser, setAnchorElUser] = useState(false);
@@ -100,16 +106,34 @@ const SideBar = (props) => {
 
   useEffect(() => {
     if (selectedUserId && isAuthenticated && user) {
+      setUserMessages([]);
       if (tabValue === "user") {
         getAllUserMessage({
           recipientId: selectedUserId.id,
           limit: global.limit,
         });
       } else if (tabValue === "group") {
-        getUserGroups();
+        if (user_groups) {
+          getAllUserGroupMessage({
+            recipientId: selectedUserId.id,
+            limit: global.limit,
+          });
+        }
       }
     }
-  }, [selectedUserId, isAuthenticated, tabValue, newGroupeResponse]);
+  }, [
+    selectedUserId,
+    isAuthenticated,
+    user_groups,
+    tabValue,
+    newGroupeResponse,
+  ]);
+
+  useEffect(() => {
+    if (tabValue === "group") {
+      getUserGroups();
+    }
+  }, [tabValue]);
 
   return (
     <>
@@ -204,7 +228,7 @@ const SideBar = (props) => {
             return (
               <ListItem
                 button
-                key={buscat.id}
+                key={`${tabValue}${buscat.id}`}
                 selected={selectedUserId.id === buscat.id ? true : false}
                 onClick={() => {
                   setSelectedUserId(buscat);

@@ -44,7 +44,7 @@ const Chat = () => {
   const classes = useStyles();
 
   const { user } = useContext(UserContext);
-  const { user_messages } = useContext(MessageContext);
+  const { user_messages, group_messages } = useContext(MessageContext);
 
   const [isUser, setUser] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(0);
@@ -74,8 +74,20 @@ const Chat = () => {
         setCommonUserId(user_messages.userData.common_key);
         setReload(!reload);
       }
+    } else if (tabValue === "group") {
+      if (group_messages && group_messages.data) {
+        if (
+          commonUserKey &&
+          commonUserKey != group_messages.userData.common_key
+        ) {
+          socket.emit("disconnect_room", { key: commonUserKey });
+        }
+        setUserMessages(group_messages.data);
+        setCommonUserId(selectedUserId.common_key);
+        setReload(!reload);
+      }
     }
-  }, [user_messages, tabValue]);
+  }, [user_messages, tabValue, selectedUserId, group_messages]);
 
   useEffect(() => {
     if (tabValue === "user") {
@@ -132,6 +144,7 @@ const Chat = () => {
           selectedUserId={selectedUserId}
           tabValue={tabValue}
           setTabValue={setTabValue}
+          setUserMessages={setUserMessages}
         />
         <Grid item xs={9}>
           <List className={classes.messageArea}>

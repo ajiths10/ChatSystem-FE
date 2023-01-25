@@ -9,10 +9,12 @@ import {
   GET_ALL_RESPONSE,
   GET_ALL_GROUPS,
   GET_NEW_GROUP_RESPONSE,
+  GET_ALL_GROUP_MESSAGES,
   CLEAR_ALL,
 } from "./MessageType";
 const initialState = {
   user_messages: [],
+  group_messages: [],
   user_groups: [],
   response: "",
   newGroupeResponse: "",
@@ -27,6 +29,12 @@ const MessageState = (props) => {
     const res = await api(formData, "/message/usermessage");
     //setAlert(res.data);
     dispatch({ type: GET_ALL_MESSAGES, data: res.data });
+  };
+
+  const getAllUserGroupMessage = async (formData) => {
+    const res = await api(formData, "/group/groupmessage");
+    //setAlert(res.data);
+    dispatch({ type: GET_ALL_GROUP_MESSAGES, data: res.data });
   };
 
   const messageAction = async (formData) => {
@@ -57,7 +65,9 @@ const MessageState = (props) => {
         response: state.response,
         user_groups: state.user_groups,
         user_messages: state.user_messages,
+        group_messages: state.group_messages,
         newGroupeResponse: state.newGroupeResponse,
+        getAllUserGroupMessage,
         getAllUserMessage,
         messageAction,
         getUserGroups,

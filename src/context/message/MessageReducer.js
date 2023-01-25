@@ -3,6 +3,7 @@ import {
   GET_ALL_RESPONSE,
   GET_NEW_GROUP_RESPONSE,
   GET_ALL_GROUPS,
+  GET_ALL_GROUP_MESSAGES,
   CLEAR_ALL,
 } from "./MessageType";
 
@@ -27,6 +28,11 @@ const MessageReducer = (state, action) => {
       return {
         ...state,
         user_groups: action.data,
+      };
+    case GET_ALL_GROUP_MESSAGES:
+      return {
+        ...state,
+        group_messages: action.data,
       };
 
     case CLEAR_ALL:

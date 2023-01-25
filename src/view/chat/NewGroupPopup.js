@@ -57,7 +57,6 @@ const NewGroupPopup = (props) => {
     initialValues: { name: "", userids: [] },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log("hiiiii", values);
       addNewGroup(values);
     },
   });
