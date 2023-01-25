@@ -62,24 +62,31 @@ const Chat = () => {
   }, [user]);
 
   useEffect(() => {
-    if (user_messages && user_messages.data) {
-      if (commonUserKey && commonUserKey != user_messages.userData.common_key) {
-        socket.emit("disconnect_room", { key: commonUserKey });
+    if (tabValue === "user") {
+      if (user_messages && user_messages.data) {
+        if (
+          commonUserKey &&
+          commonUserKey != user_messages.userData.common_key
+        ) {
+          socket.emit("disconnect_room", { key: commonUserKey });
+        }
+        setUserMessages(user_messages.data);
+        setCommonUserId(user_messages.userData.common_key);
+        setReload(!reload);
       }
-      setUserMessages(user_messages.data);
-      setCommonUserId(user_messages.userData.common_key);
-      setReload(!reload);
     }
-  }, [user_messages]);
+  }, [user_messages, tabValue]);
 
   useEffect(() => {
-    if (commonUserKey) {
-      setTimeout(() => {
-        socket.emit("join_room", { key: commonUserKey });
-      }, 1000);
+    if (tabValue === "user") {
+      if (commonUserKey) {
+        setTimeout(() => {
+          socket.emit("join_room", { key: commonUserKey });
+        }, 1000);
+      }
     }
     setReload(!reload);
-  }, [commonUserKey]);
+  }, [commonUserKey, tabValue]);
 
   useEffect(() => {
     if (socket) {

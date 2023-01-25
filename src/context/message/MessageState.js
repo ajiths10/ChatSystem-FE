@@ -32,6 +32,7 @@ const MessageState = (props) => {
   const messageAction = async (formData) => {
     const res = await api(formData, "/message/send");
     setAlert(res.data);
+    dispatch({ type: GET_ALL_RESPONSE, data: res.data });
   };
 
   const addNewGroup = async (formData) => {
