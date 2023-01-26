@@ -61,6 +61,9 @@ const ChatForm = ({ recipientId, commonUserKey, userId, tabValue }) => {
           recipientId: recipientId,
           limit: global.limit,
         });
+        socket.emit("GROUP_MESSAGE_ACTION", {
+          ...formik.values,
+        });
       }
     }
   }, [response, tabValue]);

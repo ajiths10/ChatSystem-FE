@@ -83,20 +83,19 @@ const Chat = () => {
           socket.emit("disconnect_room", { key: commonUserKey });
         }
         setUserMessages(group_messages.data);
-        setCommonUserId(selectedUserId.common_key);
+        setCommonUserId(group_messages.userData.common_key);
         setReload(!reload);
       }
     }
-  }, [user_messages, tabValue, selectedUserId, group_messages]);
+  }, [user_messages, tabValue, group_messages]);
 
   useEffect(() => {
-    if (tabValue === "user") {
-      if (commonUserKey) {
-        setTimeout(() => {
-          socket.emit("join_room", { key: commonUserKey });
-        }, 1000);
-      }
+    if (commonUserKey) {
+      setTimeout(() => {
+        socket.emit("join_room", { key: commonUserKey });
+      }, 1000);
     }
+
     setReload(!reload);
   }, [commonUserKey, tabValue]);
 
@@ -114,7 +113,28 @@ const Chat = () => {
       socket.on("ACKNOWLEDGEMENT_RESPONSE", (data) => {
         setUserMessages(data.newData);
       });
+
+      socket.on("RECEIVE_GROUP_MESSAGES", function (data) {
+        setUserMessages(data.data);
+
+        socket.emit("GROUP_ACKNOWLEDGEMENT", {
+          key: data.key,
+          limit: global.limit,
+          recipientId: data.recipientId,
+          userId: data.userId,
+          limit: data.limit,
+        });
+      });
+
+      socket.on("ACKNOWLEDGEMENT_RESPONSE", (data) => {
+        setUserMessages(data.newData);
+      });
+
+      socket.on("ACKNOWLEDGEMENT_GROUP_RESPONSE", (data) => {
+        setUserMessages(data.data);
+      });
     }
+
     setReload(!reload);
   }, [socket, commonUserKey]);
 
