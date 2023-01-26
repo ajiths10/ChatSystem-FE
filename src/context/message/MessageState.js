@@ -10,13 +10,16 @@ import {
   GET_ALL_GROUPS,
   GET_NEW_GROUP_RESPONSE,
   GET_ALL_GROUP_MESSAGES,
+  GET_SINGLE_GROUP,
   CLEAR_ALL,
 } from "./MessageType";
+
 const initialState = {
   user_messages: [],
   group_messages: [],
   user_groups: [],
   response: "",
+  single_group: "",
   newGroupeResponse: "",
 };
 
@@ -50,9 +53,21 @@ const MessageState = (props) => {
   };
 
   const getUserGroups = async (formData) => {
-    const res = await api(formData, "/group//usergroup");
+    const res = await api(formData, "/group/usergroup");
     // setAlert(res.data);
     dispatch({ type: GET_ALL_GROUPS, data: res.data });
+  };
+
+  const updategroup = async (formData) => {
+    const res = await api(formData, "/group/updategroup");
+    setAlert(res.data);
+    dispatch({ type: GET_NEW_GROUP_RESPONSE, data: res.data });
+  };
+
+  const getSingleGroup = async (formData) => {
+    const res = await api(formData, "/group/getsinglegroup");
+    // setAlert(res.data);
+    dispatch({ type: GET_SINGLE_GROUP, data: res.data.data[0] });
   };
 
   const clearAll = () => {
@@ -64,14 +79,17 @@ const MessageState = (props) => {
       value={{
         response: state.response,
         user_groups: state.user_groups,
+        single_group: state.single_group,
         user_messages: state.user_messages,
         group_messages: state.group_messages,
         newGroupeResponse: state.newGroupeResponse,
         getAllUserGroupMessage,
         getAllUserMessage,
+        getSingleGroup,
         messageAction,
         getUserGroups,
         addNewGroup,
+        updategroup,
         clearAll,
       }}
     >

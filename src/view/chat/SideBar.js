@@ -57,7 +57,11 @@ const SideBar = (props) => {
   const [anchorElUser, setAnchorElUser] = useState(false);
   const [reload, setReload] = useState(false);
   const [allUsersState, setAllUsersState] = useState([]);
-  const [newGroupPopup, setNewGroupPopup] = useState(false);
+  const [newGroupPopup, setNewGroupPopup] = useState({
+    popup: false,
+    status: "new",
+    id: 0,
+  });
 
   const settings = [
     <Button className={classes.profileBtn} onClick={handleCloseUserMenu}>
@@ -192,7 +196,7 @@ const SideBar = (props) => {
             aria-label="add"
             variant="circular"
             onClick={() => {
-              setNewGroupPopup(true);
+              setNewGroupPopup({ popup: true, status: "new", id: 0 });
             }}
           >
             <span class="material-icons">group_add</span>
@@ -241,8 +245,23 @@ const SideBar = (props) => {
                     }}
                   />
                 </ListItemIcon>
-                <ListItemText primary={buscat.name}>{buscat.name}</ListItemText>
-                {/* <ListItemText secondary="online" align="right"></ListItemText> */}
+                <ListItemText>{buscat.name}</ListItemText>
+                {tabValue === "group" ? (
+                  <ListItemText align="right">
+                    {" "}
+                    <Button
+                      onClick={() =>
+                        setNewGroupPopup({
+                          popup: true,
+                          status: "edit",
+                          id: buscat.id,
+                        })
+                      }
+                    >
+                      <span class="material-icons">edit</span>
+                    </Button>
+                  </ListItemText>
+                ) : null}
               </ListItem>
             );
           })}
@@ -252,6 +271,7 @@ const SideBar = (props) => {
         setPopup={setNewGroupPopup}
         isPopup={newGroupPopup}
         allUsersState={all_users}
+        isUser={isUser}
       />
     </>
   );
