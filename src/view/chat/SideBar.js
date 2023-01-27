@@ -246,7 +246,13 @@ const SideBar = (props) => {
                   />
                 </ListItemIcon>
                 <ListItemText>{buscat.name}</ListItemText>
-                {tabValue === "group" ? (
+                {tabValue === "group" &&
+                (buscat.admins
+                  ? buscat.admins
+                      .split(",")
+                      .map((e) => Number(e))
+                      .includes(isUser.id)
+                  : false) ? (
                   <ListItemText align="right">
                     {" "}
                     <Button
@@ -272,6 +278,7 @@ const SideBar = (props) => {
         isPopup={newGroupPopup}
         allUsersState={all_users}
         isUser={isUser}
+        tabValue={tabValue}
       />
     </>
   );

@@ -41,10 +41,11 @@ function getStyles(name, personName, theme) {
 }
 
 const NewGroupPopup = (props) => {
-  const { isPopup, setPopup, allUsersState, isUser } = props;
+  const { isPopup, setPopup, allUsersState, isUser, tabValue } = props;
 
   const {
     addNewGroup,
+    getUserGroups,
     newGroupeResponse,
     single_group,
     updategroup,
@@ -141,6 +142,9 @@ const NewGroupPopup = (props) => {
   useEffect(() => {
     if (newGroupeResponse) {
       if (newGroupeResponse.status) {
+        if (tabValue === "group") {
+          getUserGroups();
+        }
         handleClose();
       }
     }
