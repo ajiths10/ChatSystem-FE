@@ -6,6 +6,9 @@ import Button from "@mui/material/Button";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import UserContext from "../../context/user/UserContext";
+import { randomColor } from "../../common/common";
+import Tooltip from "@mui/material/Tooltip";
+import "./Chat.css";
 
 const Profile = (props) => {
   const { profilePopup, setProfilePopup } = props;
@@ -44,6 +47,11 @@ const Profile = (props) => {
   const handleClose = () => {
     setProfilePopup(false);
     formik.handleReset();
+  };
+
+  const handleColor = () => {
+    let color = randomColor();
+    formik.setFieldValue("avatar", color);
   };
 
   useEffect(() => {
@@ -100,22 +108,44 @@ const Profile = (props) => {
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
               />
-              <TextField
-                margin="normal"
-                fullWidth
-                id="avatar"
-                label="Avatar "
-                name="avatar"
-                autoComplete="avatar"
-                value={formik.values.avatar}
-                onChange={formik.handleChange}
-                error={formik.touched.avatar && Boolean(formik.errors.avatar)}
-                helperText={formik.touched.avatar && formik.errors.avatar}
-              />
+              <div class="row">
+                <div class="col-md-10">
+                  <TextField
+                    margin="normal"
+                    id="avatar"
+                    fullWidth
+                    label="Avatar "
+                    name="avatar"
+                    autoComplete="avatar"
+                    value={formik.values.avatar}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.avatar && Boolean(formik.errors.avatar)
+                    }
+                    helperText={formik.touched.avatar && formik.errors.avatar}
+                  />
+                </div>
+                <div class="col-md-2 mt-3">
+                  <Tooltip title="Generate a rondom color" placement="top">
+                    <Button
+                      variant="outlined"
+                      onClick={handleColor}
+                      size="large"
+                      className="randomColorBtn"
+                    >
+                      <span class="material-icons">color_lens</span>
+                    </Button>
+                  </Tooltip>
+                </div>
+              </div>
             </div>
             <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button type="submit">Create</Button>
+              <Button variant="outlined" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="contained" type="submit">
+                Create
+              </Button>
             </DialogActions>
           </form>
         </div>

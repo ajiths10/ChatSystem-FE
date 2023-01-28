@@ -154,7 +154,7 @@ const SideBar = (props) => {
                     <Avatar
                       alt="profile"
                       style={{
-                        backgroundColor: randomColor(),
+                        backgroundColor: isUser.avatar || randomColor(),
                       }}
                     />
                   </IconButton>
@@ -244,7 +244,7 @@ const SideBar = (props) => {
                 <ListItemIcon>
                   <Avatar
                     style={{
-                      backgroundColor: randomColor(),
+                      backgroundColor: buscat.avatar || randomColor(),
                     }}
                   />
                 </ListItemIcon>

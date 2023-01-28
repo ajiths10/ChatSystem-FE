@@ -217,9 +217,11 @@ const NewGroupPopup = (props) => {
                 input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={fetchName(value)} />
-                    ))}
+                    {selected
+                      ? selected.map((value) => (
+                          <Chip key={value} label={fetchName(value)} />
+                        ))
+                      : []}
                   </Box>
                 )}
                 MenuProps={MenuProps}
