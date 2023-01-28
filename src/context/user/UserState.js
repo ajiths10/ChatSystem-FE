@@ -12,12 +12,14 @@ import {
   USER_AUTHENTICATED,
   USER_ALL_USERS,
   USER_LOG_OUT,
+  USER_UPDATE,
   CLEAR_ALL,
 } from "./UserType";
 const initialState = {
   isAuthenticated: false,
   user: [],
   all_users: [],
+  update_reponse: "",
   response: "",
 };
 
@@ -70,6 +72,13 @@ const UserState = (props) => {
     dispatch({ type: USER_ALL_USERS, data: res.data.data });
   };
 
+  const updateUser = async (formData) => {
+    const res = await api(formData, "/user/update");
+    setAlert(res.data);
+    dispatch({ type: USER_UPDATE, data: res.data });
+    dispatch({ type: USER_AUTHENTICATED, data: res.data.data });
+  };
+
   const userLogout = (noAlert, secondaryData) => {
     if (noAlert) {
     } else {
@@ -91,10 +100,12 @@ const UserState = (props) => {
       value={{
         response: state.response,
         isAuthenticated: state.isAuthenticated,
+        update_reponse: state.update_reponse,
         all_users: state.all_users,
         user: state.user,
         RegisterUser,
         LoginUser,
+        updateUser,
         VerifyUser,
         getAllUSers,
         userLogout,

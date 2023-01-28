@@ -21,6 +21,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Fab from "@mui/material/Fab";
 import NewGroupPopup from "./NewGroupPopup";
+import Profile from "./Profile";
 
 const useStyles = makeStyles({
   borderRight500: {
@@ -57,6 +58,7 @@ const SideBar = (props) => {
   const [anchorElUser, setAnchorElUser] = useState(false);
   const [reload, setReload] = useState(false);
   const [allUsersState, setAllUsersState] = useState([]);
+  const [profilePopup, setProfilePopup] = useState(false);
   const [newGroupPopup, setNewGroupPopup] = useState({
     popup: false,
     status: "new",
@@ -79,6 +81,7 @@ const SideBar = (props) => {
 
   function handleCloseUserMenu() {
     setAnchorElUser(false);
+    setProfilePopup(true);
   }
 
   useEffect(() => {
@@ -280,6 +283,7 @@ const SideBar = (props) => {
         isUser={isUser}
         tabValue={tabValue}
       />
+      <Profile profilePopup={profilePopup} setProfilePopup={setProfilePopup} />
     </>
   );
 };
