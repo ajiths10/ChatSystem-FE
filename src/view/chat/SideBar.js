@@ -22,6 +22,8 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Fab from "@mui/material/Fab";
 import NewGroupPopup from "./NewGroupPopup";
 import Profile from "./Profile";
+import Divider from "@material-ui/core/Divider";
+import PaymentContext from "../../context/payment/PaymentContext";
 
 const useStyles = makeStyles({
   borderRight500: {
@@ -30,6 +32,10 @@ const useStyles = makeStyles({
   profileBtn: {
     width: "100%",
     height: "100%",
+  },
+  messageArea: {
+    overflowY: "auto",
+    height: "55vh",
   },
 });
 
@@ -54,6 +60,7 @@ const SideBar = (props) => {
     newGroupeResponse,
     getAllUserGroupMessage,
   } = useContext(MessageContext);
+  const { payment } = useContext(PaymentContext);
 
   const [anchorElUser, setAnchorElUser] = useState(false);
   const [reload, setReload] = useState(false);
@@ -230,7 +237,7 @@ const SideBar = (props) => {
           />
         </Grid>
 
-        <List>
+        <List className={classes.messageArea}>
           {allUsersState.map((buscat, index) => {
             return (
               <ListItem
@@ -275,7 +282,19 @@ const SideBar = (props) => {
             );
           })}
         </List>
+        <Divider />
+        <Grid style={{ padding: "10px" }}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              payment();
+            }}
+          >
+            Coffee
+          </Button>
+        </Grid>
       </Grid>
+
       <NewGroupPopup
         setPopup={setNewGroupPopup}
         isPopup={newGroupPopup}

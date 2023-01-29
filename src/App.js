@@ -3,6 +3,7 @@ import "./App.css";
 import UserState from "./context/user/UserState";
 import MessageState from "./context/message/MessageState";
 import CommonState from "./context/common/CommonState";
+import PaymentState from "./context/payment/PaymentState";
 import RouteIndex from "./Route";
 import { SnackbarProvider } from "notistack";
 import { socket } from "./common/socket";
@@ -20,9 +21,11 @@ const App = () => {
       <SnackbarProvider>
         <CommonState>
           <UserState>
-            <MessageState>
-              <RouteIndex />
-            </MessageState>
+            <PaymentState>
+              <MessageState>
+                <RouteIndex />
+              </MessageState>
+            </PaymentState>
           </UserState>
         </CommonState>
       </SnackbarProvider>

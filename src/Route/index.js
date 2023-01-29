@@ -7,6 +7,7 @@ import PrivateRoute from "./PrivateRoute";
 import ReversePrivateRoute from "./ReversePrivateRoute";
 import UserContext from "../context/user/UserContext";
 import { useSelector } from "react-redux";
+import Payment from "../view/payment";
 
 const RouteIndex = () => {
   const { VerifyUser, isAuthenticated } = useContext(UserContext);
@@ -46,6 +47,14 @@ const RouteIndex = () => {
           element={
             <PrivateRoute>
               <Chat />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/payment/:token/:status"
+          element={
+            <PrivateRoute>
+              <Payment />
             </PrivateRoute>
           }
         />
