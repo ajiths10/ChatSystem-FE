@@ -19,6 +19,8 @@ import Checkbox from "@mui/material/Checkbox";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import MessageContext from "../../context/message/MessageContext";
+import { randomColor } from "../../common/common";
+import Tooltip from "@mui/material/Tooltip";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -60,10 +62,11 @@ const NewGroupPopup = (props) => {
   const validationSchema = yup.object({
     name: yup.string().required("required"),
     userids: yup.array().min(1, "required").required("required"),
+    avatar: yup.string().required("required"),
   });
 
   const formik = useFormik({
-    initialValues: { name: "", userids: [], id: 0, admins: [] },
+    initialValues: { name: "", userids: [], id: 0, admins: [], avatar: "" },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log("hiiii", values);
@@ -82,6 +85,7 @@ const NewGroupPopup = (props) => {
     formik.setFieldValue("name", "");
     formik.setFieldValue("id", 0);
     formik.setFieldValue("admins", []);
+    formik.setFieldValue("avatar", "");
   };
 
   const handleClose = () => {
@@ -169,6 +173,7 @@ const NewGroupPopup = (props) => {
       );
       formik.setFieldValue("name", single_group.name);
       formik.setFieldValue("id", single_group.id);
+      formik.setFieldValue("avatar", single_group.avatar);
       setAdminsName(
         single_group.admins
           ? single_group.admins.split(",").map((ele) => Number(ele))
@@ -177,12 +182,17 @@ const NewGroupPopup = (props) => {
     }
   }, [single_group]);
 
+  const handleColor = () => {
+    let color = randomColor();
+    formik.setFieldValue("avatar", color);
+  };
+
   return (
     <div>
       <Dialog open={isPopup.popup} onClose={handleClose}>
         <DialogTitle>Create New Group</DialogTitle>
         <form onSubmit={formik.handleSubmit}>
-          <DialogContent>
+          <DialogContent sx={{ m: 3 }}>
             <DialogContentText>
               Select the users to create a new group.
             </DialogContentText>
@@ -283,10 +293,32 @@ const NewGroupPopup = (props) => {
                 ? formik.touched.admins && formik.errors.admins
                 : null}
             </FormControl>
+            <FormControl sx={{ m: 1, width: 500 }}>
+              <TextField
+                id="filled-basic"
+                variant="outlined"
+                margin="dense"
+                placeholder="Avatar"
+                xs={12}
+                name="avatar"
+                autoFocus
+                value={formik.values.avatar}
+                onChange={formik.handleChange}
+                error={formik.touched.avatar && Boolean(formik.errors.avatar)}
+                helperText={formik.touched.avatar && formik.errors.avatar}
+              />
+              <Tooltip title="Generate a rondom color" placement="top">
+                <Button variant="outlined" onClick={handleColor} size="large">
+                  <span class="material-icons">color_lens</span>
+                </Button>
+              </Tooltip>
+            </FormControl>
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ m: 4 }}>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Create</Button>
+            <Button variant="contained" type="submit">
+              Create
+            </Button>
           </DialogActions>
         </form>
       </Dialog>
