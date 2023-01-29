@@ -3,3 +3,19 @@
   margin-top: 16px;
   width: 112px;
 }
+
+.emptyContainer {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: product sans;
+}
+
+.emptyContainer h3 {
+  font-size: 30px;
+  color: #a2a2a2;
+  font-style: product-sans;
+  font-weight: 600;
+  font-family: "Open Sans";
+}

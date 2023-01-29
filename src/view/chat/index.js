@@ -19,6 +19,7 @@ import moment from "moment";
 import { socket } from "../../common/socket";
 import { Typography } from "@mui/material";
 import SideBar from "./SideBar";
+import EmptyChat from "./EmptyChat";
 
 const useStyles = makeStyles({
   chatSection: {
@@ -168,48 +169,58 @@ const Chat = () => {
         />
         <Grid item xs={9}>
           <List className={classes.messageArea}>
-            {userMessages.map((spacedog, index) => {
-              return (
-                <ListItem key={spacedog.id}>
-                  <Grid container className={classes.list_items}>
-                    <Grid item xs={12}>
-                      <ListItemText
-                        align={isUser.id === spacedog.userid ? "right" : "left"}
-                      >
-                        <Typography variant="overline">
-                          {spacedog.name}
-                        </Typography>
-                      </ListItemText>
-                      <ListItemText
-                        align={isUser.id === spacedog.userid ? "right" : "left"}
-                      >
-                        <Typography variant="button">
-                          {spacedog.message}
-                        </Typography>
-                      </ListItemText>
+            {userMessages && userMessages.length ? (
+              userMessages.map((spacedog, index) => {
+                return (
+                  <ListItem key={spacedog.id}>
+                    <Grid container className={classes.list_items}>
+                      <Grid item xs={12}>
+                        <ListItemText
+                          align={
+                            isUser.id === spacedog.userid ? "right" : "left"
+                          }
+                        >
+                          <Typography variant="overline">
+                            {spacedog.name}
+                          </Typography>
+                        </ListItemText>
+                        <ListItemText
+                          align={
+                            isUser.id === spacedog.userid ? "right" : "left"
+                          }
+                        >
+                          <Typography variant="button">
+                            {spacedog.message}
+                          </Typography>
+                        </ListItemText>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <ListItemText
+                          align={
+                            isUser.id === spacedog.userid ? "right" : "left"
+                          }
+                        >
+                          <Typography variant="caption">
+                            {isUser.id === spacedog.userid
+                              ? moment(spacedog.created_at).format("hh:mm a") +
+                                " " +
+                                spacedog.status
+                              : moment(spacedog.created_at).format("hh:mm a")}
+                          </Typography>
+                          {userMessages.length === index + 1 ? (
+                            <div ref={lastChildRef} />
+                          ) : (
+                            <></>
+                          )}
+                        </ListItemText>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                      <ListItemText
-                        align={isUser.id === spacedog.userid ? "right" : "left"}
-                      >
-                        <Typography variant="caption">
-                          {isUser.id === spacedog.userid
-                            ? moment(spacedog.created_at).format("hh:mm a") +
-                              " " +
-                              spacedog.status
-                            : moment(spacedog.created_at).format("hh:mm a")}
-                        </Typography>
-                        {userMessages.length === index + 1 ? (
-                          <div ref={lastChildRef} />
-                        ) : (
-                          <></>
-                        )}
-                      </ListItemText>
-                    </Grid>
-                  </Grid>
-                </ListItem>
-              );
-            })}
+                  </ListItem>
+                );
+              })
+            ) : (
+              <EmptyChat />
+            )}
           </List>
           <Divider />
           <ChatForm
