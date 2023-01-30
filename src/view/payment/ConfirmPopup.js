@@ -35,7 +35,7 @@ const ConfirmPopup = (props) => {
 
   const handleClose = () => {
     setPaymentPopup(false);
-    formik.handleReset();
+    handleReset();
   };
 
   useEffect(() => {
@@ -47,6 +47,12 @@ const ConfirmPopup = (props) => {
       handleClose();
     }
   }, [response]);
+
+  const handleReset = () => {
+    formik.setFieldValue("amount", 0);
+    formik.setFieldValue("message", "");
+    formik.handleReset();
+  };
 
   return (
     <>
