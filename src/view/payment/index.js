@@ -7,7 +7,6 @@ const Payment = () => {
   const params = useParams();
 
   useEffect(() => {
-    console.log("hiiii01", params);
     if (params.status && params.token) {
       paymentConfirmation({ token: params.token, status: params.status });
     }
@@ -15,7 +14,7 @@ const Payment = () => {
 
   return (
     <>
-      <h1>hello</h1>
+      <h1>{params.status}</h1>
     </>
   );
 };

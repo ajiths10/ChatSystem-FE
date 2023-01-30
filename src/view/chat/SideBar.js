@@ -24,6 +24,7 @@ import NewGroupPopup from "./NewGroupPopup";
 import Profile from "./Profile";
 import Divider from "@material-ui/core/Divider";
 import PaymentContext from "../../context/payment/PaymentContext";
+import ConfirmPopup from "../payment/ConfirmPopup";
 
 const useStyles = makeStyles({
   borderRight500: {
@@ -66,6 +67,7 @@ const SideBar = (props) => {
   const [reload, setReload] = useState(false);
   const [allUsersState, setAllUsersState] = useState([]);
   const [profilePopup, setProfilePopup] = useState(false);
+  const [paymentPopup, setPaymentPopup] = useState(false);
   const [newGroupPopup, setNewGroupPopup] = useState({
     popup: false,
     status: "new",
@@ -287,10 +289,11 @@ const SideBar = (props) => {
           <Button
             variant="outlined"
             onClick={() => {
-              payment();
+              setPaymentPopup(true);
+              // payment();
             }}
           >
-            Coffee
+            Buy me a coffee ❤️
           </Button>
         </Grid>
       </Grid>
@@ -303,6 +306,10 @@ const SideBar = (props) => {
         tabValue={tabValue}
       />
       <Profile profilePopup={profilePopup} setProfilePopup={setProfilePopup} />
+      <ConfirmPopup
+        paymentPopup={paymentPopup}
+        setPaymentPopup={setPaymentPopup}
+      />
     </>
   );
 };
