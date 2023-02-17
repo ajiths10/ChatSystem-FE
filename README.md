@@ -1,3 +1,13 @@
+## Dev note
+
+Backend code repo (Node js) - https://github.com/ajiths10/ChatSystem-Backend
+
+Database (MySQL) - 'Database/
+
+# Clone url
+
+Backend code clone url (https) - https://github.com/ajiths10/ChatSystem-Backend.git
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
